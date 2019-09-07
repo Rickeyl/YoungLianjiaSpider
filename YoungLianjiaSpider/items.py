@@ -8,7 +8,19 @@
 import scrapy
 
 
-class YounglianjiaspiderItem(scrapy.Item):
+class XiaoquItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    id = scrapy.Field()
+    url = scrapy.Field()
+    name = scrapy.Field()
+    address = scrapy.Field()
+    unit_price = scrapy.Field()
+    sold_count = scrapy.Field()
+    selling_count = scrapy.Field()
+    renting_count = scrapy.Field()
+    house_type = scrapy.Field()
+    property_costs = scrapy.Field()
+    property_company = scrapy.Field()
+    developer = scrapy.Field()
+    buiding_count = scrapy.Field()
+    door_count = scrapy.Field()
