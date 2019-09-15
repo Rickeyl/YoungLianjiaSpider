@@ -24,3 +24,4 @@ class XiaoquItem(scrapy.Item):
     developer = scrapy.Field()
     buiding_count = scrapy.Field()
     door_count = scrapy.Field()
+    unit_price_desc = scrapy.Field()

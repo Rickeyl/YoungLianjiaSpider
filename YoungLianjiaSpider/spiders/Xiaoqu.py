@@ -34,9 +34,9 @@ class XiaoquSpider(scrapy.Spider):
         item = XiaoquItem()
         item['name'] = response.xpath('//*[@class="xiaoquDetailHeader"]/div/div/*[@class="detailTitle"]/text()').extract_first()
         item['address'] = response.xpath('//*[@class="xiaoquDetailHeader"]/div/div/*[@class="detailDesc"]/text()').extract_first()
-        unit_price = response.xpath('//*[@class="xiaoquOverview"]/div[@class="xiaoquDescribe fr"]/div[@class="xiaoquPrice clear"]/div/span[1]/text()').extract_first()
-        unit_price_desc = response.xpath('//*[@class="xiaoquOverview"]/div[@class="xiaoquDescribe fr"]/div[@class="xiaoquPrice clear"]/div/span[2]/text()').extract_first()
-        item['unit_price'] = unit_price_desc + unit_price+'元/m'
+        item['unit_price'] = response.xpath('//*[@class="xiaoquOverview"]/div[@class="xiaoquDescribe fr"]/div[@class="xiaoquPrice clear"]/div/span[1]/text()').extract_first()
+        unit_price_desc  = response.xpath('//*[@class="xiaoquOverview"]/div[@class="xiaoquDescribe fr"]/div[@class="xiaoquPrice clear"]/div/span[2]/text()').extract_first()
+        item['unit_price_desc'] = unit_price_desc + '(元/m^2)'
         info_label = response.xpath('//*[@class="xiaoquInfo"]/div[@class="xiaoquInfoItem"]/span[@class="xiaoquInfoLabel"]/text()').extract()
         info_content = response.xpath(
             '//*[@class="xiaoquInfo"]/div[@class="xiaoquInfoItem"]/span[@class="xiaoquInfoContent"]/text()').extract()
@@ -52,7 +52,8 @@ class XiaoquSpider(scrapy.Spider):
         item['renting_count'] = response.meta['renting_count']
         item['selling_count'] = response.meta['selling_count']
 
-        item['url'] = response.meta['url']
+        item['url'] = response.meta['url'].strip()
         item['id'] = response.meta['id']
+
         return item
 
