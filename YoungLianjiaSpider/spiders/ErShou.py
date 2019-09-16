@@ -28,5 +28,15 @@ class ErshouSpider(scrapy.Spider):
             yield scrapy.Request(url=url,meta={'total_selling':response.meta['total_selling']}, callback=self.paser_xiaoqu)
 
     def paser_house(self,response):
-        print(response)
+        title = response.xpath('//*[@class="sellDetailHeader"]/div/div/div[@class="title"]/h1/text()').extract_first()
+        sub_title = response.xpath('//*[@class="sellDetailHeader"]/div/div/div[@class="title"]/div/text()').extract_first()
+        total_price = response.xpath('//*[@class="overview"]/div[@class="content"]/div[@class="price "]/span[@class="total"]/text()').extract_first()
+        unit_price = response.xpath('//*[@class="overview"]/div[@class="content"]/div[@class="price "]/div[@class="text"]/div[@class="unitPrice"]/span/text()').extract_first()
+        community_name = response.xpath('//*[@class="aroundInfo"]/div[@class="communityName"]/a/text()').extract_first()
+        area_name = ' '.join(response.xpath('//*[@class="aroundInfo"]/div[@class="areaName"]/span[@class="info"]/a/text()').extract())
+        base_info_values = response.xpath('//*[@id="introduction"]/div/div[@class="introContent"]/div[@class="base"]/div[@class="content"]/ul/li/text()').extract()
+        base_info_keys = response.xpath('//*[@id="introduction"]/div/div[@class="introContent"]/div[@class="base"]/div[@class="content"]/ul/li/span/text()').extract()
+
+        transaction_info_values = response.xpath('//*[@id="introduction"]/div/div[@class="introContent"]/div[@class="transaction"]/div[@class="content"]/ul/li/span[2]/text()').extract()
+        transaction_info_keys = response.xpath('//*[@id="introduction"]/div/div[@class="introContent"]/div[@class="transaction"]/div[@class="content"]/ul/li/span[1]/text()').extract()
         pass
