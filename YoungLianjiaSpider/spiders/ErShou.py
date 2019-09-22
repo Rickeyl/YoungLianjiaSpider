@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import pandas as pd
+from YoungLianjiaSpider.items import SellingHouseItem,SoldHouseItem
 
 class ErshouSpider(scrapy.Spider):
     name = 'ErShou'
@@ -47,24 +48,84 @@ class ErshouSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.paser_sold_list)
 
     def paser_selling_house(self,response):
-        title = response.xpath('//*[@class="sellDetailHeader"]/div/div/div[@class="title"]/h1/text()').extract_first()
-        sub_title = response.xpath('//*[@class="sellDetailHeader"]/div/div/div[@class="title"]/div/text()').extract_first()
-        total_price = response.xpath('//*[@class="overview"]/div[@class="content"]/div[@class="price "]/span[@class="total"]/text()').extract_first()
-        unit_price = response.xpath('//*[@class="overview"]/div[@class="content"]/div[@class="price "]/div[@class="text"]/div[@class="unitPrice"]/span/text()').extract_first()
-        community_name = response.xpath('//*[@class="aroundInfo"]/div[@class="communityName"]/a/text()').extract_first()
-        area_name = ' '.join(response.xpath('//*[@class="aroundInfo"]/div[@class="areaName"]/span[@class="info"]/a/text()').extract())
+        item = SellingHouseItem()
+        item['title'] = response.xpath('//*[@class="sellDetailHeader"]/div/div/div[@class="title"]/h1/text()').extract_first()
+        item['sub_title'] = response.xpath('//*[@class="sellDetailHeader"]/div/div/div[@class="title"]/div/text()').extract_first()
+        item['total_price'] = response.xpath('//*[@class="overview"]/div[@class="content"]/div[@class="price "]/span[@class="total"]/text()').extract_first()
+        item['unit_price'] = response.xpath('//*[@class="overview"]/div[@class="content"]/div[@class="price "]/div[@class="text"]/div[@class="unitPrice"]/span/text()').extract_first()
+        item['community_name'] = response.xpath('//*[@class="aroundInfo"]/div[@class="communityName"]/a/text()').extract_first()
+        item['area_name'] = ' '.join(response.xpath('//*[@class="aroundInfo"]/div[@class="areaName"]/span[@class="info"]/a/text()').extract())
+
         base_info_values = response.xpath('//*[@id="introduction"]/div/div[@class="introContent"]/div[@class="base"]/div[@class="content"]/ul/li/text()').extract()
         base_info_keys = response.xpath('//*[@id="introduction"]/div/div[@class="introContent"]/div[@class="base"]/div[@class="content"]/ul/li/span/text()').extract()
 
+        item['house_type'] = base_info_values[0]
+        item['house_floor'] = base_info_values[1]
+        item['house_area'] = base_info_values[2]
+        item['house_structure'] = base_info_values[3]
+        item['used_area'] = base_info_values[4]
+        item['building_type'] = base_info_values[5]
+        item['house_direction'] = base_info_values[6]
+        item['building_structure'] = base_info_values[7]
+        item['ren_condition'] = base_info_values[8]
+        item['ladder_ratio'] = base_info_values[9]
+        item['is_elevator'] = base_info_values[10]
+        item['property_age'] = base_info_values[11]
+
         transaction_info_values = response.xpath('//*[@id="introduction"]/div/div[@class="introContent"]/div[@class="transaction"]/div[@class="content"]/ul/li/span[2]/text()').extract()
         transaction_info_keys = response.xpath('//*[@id="introduction"]/div/div[@class="introContent"]/div[@class="transaction"]/div[@class="content"]/ul/li/span[1]/text()').extract()
-        pass
+
+        item['listing_time'] = transaction_info_values[0]
+        item['transaction_authority'] = transaction_info_values[1]
+        item['last_transaction'] = transaction_info_values[2]
+        item['house_purposes'] = transaction_info_values[3]
+        item['house_age'] = transaction_info_values[4]
+        item['house_ownership'] = transaction_info_values[5]
+        item['mortgage_info'] = transaction_info_values[6]
+        item['room_parts'] = transaction_info_values[7]
+
+        return item
 
     def paser_sold_house(self,response):
 
-        title = response.meta['title']
-        deal_date = response.meta['deal_date']
-        deal_price = response.xpath('//*[@class="wrapper"]/div[@class="overview"]/div[@class="info fr"]/div[@class="price"]/span[@class="dealTotalPrice"]/i/text()').extract_first()
-        unit_price = response.xpath('//*[@class="wrapper"]/div[@class="overview"]/div[@class="info fr"]/div[@class="price"]/b/text()').extract_first()
+        item = SoldHouseItem()
 
-        pass
+        item['title'] = response.meta['title']
+        item['deal_date'] = response.meta['deal_date']
+        item['deal_price'] = response.xpath('//*[@class="wrapper"]/div[@class="overview"]/div[@class="info fr"]/div[@class="price"]/span[@class="dealTotalPrice"]/i/text()').extract_first()
+        item['unit_price'] = response.xpath('//*[@class="wrapper"]/div[@class="overview"]/div[@class="info fr"]/div[@class="price"]/b/text()').extract_first()
+
+        item['msg_list'] = response.xpath('//*[@class="wrapper"]/div[@class="overview"]/div[@class="info fr"]/div[@class="msg"]/span/label/text()').extract()
+
+        base_info_values = response.xpath(
+            '//*[@id="introduction"]/div[@class="introContent"]/div[@class="base"]/div[@class="content"]/ul/li/text()').extract()
+        base_info_keys = response.xpath(
+            '//*[@id="introduction"]/div[@class="introContent"]/div[@class="base"]/div[@class="content"]/ul/li/span/text()').extract()
+
+        item['house_type'] = base_info_values[0]
+        item['house_floor'] = base_info_values[1]
+        item['house_area'] = base_info_values[2]
+        item['house_structure'] = base_info_values[3]
+        item['used_area'] = base_info_values[4]
+        item['building_type'] = base_info_values[5]
+        item['house_direction'] = base_info_values[6]
+        item['house_age'] = base_info_values[7]
+        item['ren_condition'] = base_info_values[8]
+        item['building_structure'] = base_info_values[9]
+        item['heating_method'] = base_info_values[10]
+        item['ladder_ratio'] = base_info_values[11]
+        item['property_age'] = base_info_values[12]
+        item['is_elevator'] = base_info_values[13]
+
+        transaction_info_values = response.xpath(
+            '//*[@id="introduction"]/div[@class="introContent"]/div[@class="transaction"]/div[@class="content"]/ul/li/text()').extract()
+        transaction_info_keys = response.xpath(
+            '//*[@id="introduction"]/div[@class="introContent"]/div[@class="transaction"]/div[@class="content"]/ul/li/span/text()').extract()
+
+        item['lianjia_id'] = transaction_info_values[0]
+        item['transaction_authority'] = transaction_info_values[1]
+        item['listing_time'] = transaction_info_values[2]
+        item['house_purposes'] = transaction_info_values[3]
+        item['house_ownership'] = transaction_info_values[4]
+
+        return item
